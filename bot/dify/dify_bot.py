@@ -56,6 +56,27 @@ class DifyBot(Bot):
             self.sessionManager.add_session(nick_name, session_id)
             reply = Reply(ReplyType.TEXT, reply_content["answer"])
             return reply
+        elif context.type == ContextType.SHARING:
+            logger.info("[DIFY] sharing={}".format(query))
+            session_id = context["session_id"]
+            nick_name = context.get("msg").from_user_nickname
+            from_user_id = context.get("msg").from_user_id
+            reply = None
+            session_id = self.sessionManager.get_current_sessions(nick_name)
+
+            reply_content = self.reply_text(query, user=nick_name, session_id=session_id)
+            logger.debug(
+                "[DIFY] new_query={}, session_id={}, reply_cont={}, session_id={}".format(
+                    query,
+                    session_id,
+                    reply_content["answer"],
+                    reply_content["conversation_id"],
+                )
+            )
+            session_id = reply_content["conversation_id"]
+            self.sessionManager.add_session(nick_name, session_id)
+            reply = Reply(ReplyType.TEXT, reply_content["answer"] + "\n\n\n\n" + "# 如果想进一步了解文章内容，可以进一步提问。 #")
+            return reply
         else:
             reply = Reply(ReplyType.ERROR, "抱歉，暂不支持处理{}类型的消息".format(context.type))
             return reply
