@@ -226,6 +226,9 @@ class ChatChannel(Channel):
                 reply = super().build_reply_content(context.content, context)
             elif context.type == ContextType.FUNCTION or context.type == ContextType.FILE:  # 文件消息及函数调用等，当前无默认逻辑
                 pass
+            elif context.type == ContextType.ACCEPT_FRIEND:  # 好友申请，当前无默认逻辑
+                context["channel"] = e_context["channel"]
+                reply = super().build_reply_content(context.content, context)
             else:
                 logger.warning("[WX] unknown context type: {}".format(context.type))
                 return

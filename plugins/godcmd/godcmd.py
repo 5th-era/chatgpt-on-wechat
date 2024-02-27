@@ -220,10 +220,10 @@ class Godcmd(Plugin):
         logger.debug("[Godcmd] on_handle_context. content: %s" % content)
         if content.startswith("#"):
             if len(content) == 1:
-                reply = Reply()
-                reply.type = ReplyType.ERROR
-                reply.content = f"空指令，输入#help查看指令列表\n"
-                e_context["reply"] = reply
+                # reply = Reply()
+                # reply.type = ReplyType.ERROR
+                # reply.content = f"空指令，输入#help查看指令列表\n"
+                # e_context["reply"] = reply
                 e_context.action = EventAction.BREAK_PASS
                 return
             # msg = e_context['context']['msg']
@@ -242,6 +242,21 @@ class Godcmd(Plugin):
                 isadmin = True
             ok = False
             result = "string"
+
+            if cmd == "auth_for_admin":
+                ok, result = self.authenticate(user, args, isadmin, isgroup)
+                reply = Reply()
+                if ok:
+                    reply.type = ReplyType.INFO
+                else:
+                    reply.type = ReplyType.ERROR
+                reply.content = result
+                e_context["reply"] = reply
+                e_context.action = EventAction.BREAK_PASS
+                return
+            elif not isadmin:
+                e_context.action = EventAction.BREAK_PASS
+                return
             if any(cmd in info["alias"] for info in COMMANDS.values()):
                 cmd = next(c for c, info in COMMANDS.items() if cmd in info["alias"])
                 if cmd == "auth":
