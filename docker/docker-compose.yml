@@ -1,8 +1,12 @@
 version: '2.0'
+networks:
+  touzi:
 services:
-  chatgpt-on-wechat:
+  touzi:
     image: yz181x/chatgpt-on-wechat:240227
-    container_name: chatgpt-on-wechat
+    container_name: touzi
+    networks:
+      - touzi
     security_opt:
       - seccomp:unconfined
     environment:
